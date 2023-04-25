@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = require('@actions/core');
 const github = require('@actions/github');
 const matchAll = require("match-all");
-const Octokit = require("@octokit/rest");
+const { Octokit } = require("@octokit/rest");
 async function extractJiraKeysFromCommit() {
     try {
         const regex = /((?:[SDPT]{2,3})-[\d]+)/g;
@@ -47,8 +47,7 @@ async function extractJiraKeysFromCommit() {
                 });
             });
             const result = resultArr.join(',');
-            process.env['jira-keys'] = result;
-            //core.setOutput("jira-keys", result);
+            core.setOutput("jira-keys", result);
         }
         else {
             // console.log("not a pull request");
@@ -57,8 +56,7 @@ async function extractJiraKeysFromCommit() {
                 const matches = matchAll(commitMessage, regex).toArray();
                 const uniqueMatches = removeDuplicateJiraKeys(matches);
                 const result = uniqueMatches.join(',');
-                process.env['jira-keys'] = result;
-                //core.setOutput("jira-keys", result);
+                core.setOutput("jira-keys", result);
             }
             else {
                 // console.log("no commit-message input val provided...");
@@ -79,16 +77,14 @@ async function extractJiraKeysFromCommit() {
                         });
                     });
                     const result = resultArr.join(',');
-                    process.env['jira-keys'] = result;
-                    //core.setOutput("jira-keys", result);
+                    core.setOutput("jira-keys", result);
                 }
                 else {
                     // console.log("parse-all-commits input val is false");
                     // console.log("head_commit: ", payload.head_commit);
                     const matches = matchAll(payload.head_commit.message, regex).toArray();
                     const result = matches.join(',');
-                    process.env['jira-keys'] = result;
-                    //core.setOutput("jira-keys", result);
+                    core.setOutput("jira-keys", result);
                 }
             }
         }
